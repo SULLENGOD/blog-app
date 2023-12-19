@@ -9,7 +9,7 @@ export interface IUser extends Document {
     validatePassword(password: string): Promise<boolean>;
     posts: string[];
     role: 'super_administrator' | 'administrator' | 'moderator' | 'user';
-    isMuted: boolean;
+    muted: boolean;
 };
 
 const userSchema = new Schema ({
@@ -42,7 +42,12 @@ const userSchema = new Schema ({
         required: true,
         default: 'user',
         enum: ['user', 'administrator', 'moderator', 'super_administrator']
-    }
+    },
+
+    muted: {
+        type: Boolean,
+        default: false
+    } 
 });
 
 userSchema.methods.encryptPassword = async function(password: string): Promise<string> {

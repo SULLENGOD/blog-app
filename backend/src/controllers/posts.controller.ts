@@ -5,7 +5,7 @@ import User from "../models/user.model";
 export const newPost = async (req: Request, res: Response) => {
   try {
     const user = await User.findById(req.userId, { password: 0 });
-    if (!user) return res.status(401).json("Unauthorized");
+    if (!user || user.muted) return res.status(401).json("Unauthorized");
 
     const newPostData: IPost = {
       title: req.body.title,
