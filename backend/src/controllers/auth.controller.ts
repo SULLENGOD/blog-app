@@ -1,9 +1,14 @@
 import { Request, Response } from "express";
 import User, { IUser } from "../models/user.model";
 import jwt from "jsonwebtoken";
+import { validationResult } from "express-validator";
 
 export const signup = async (req: Request, res: Response) => {
   try {
+    const errors = validationResult(req.body);
+    if (!errors.isEmpty())
+      return res.status(400).json({ erros: errors.array() });
+
     const user: IUser = new User({
       username: req.body.username,
       email: req.body.email,
@@ -27,6 +32,10 @@ export const signup = async (req: Request, res: Response) => {
 
 export const signin = async (req: Request, res: Response) => {
   try {
+    const errors = validationResult(req.body);
+    if (!errors.isEmpty())
+      return res.status(400).json({ erros: errors.array() });
+
     const user = await User.findOne({ email: req.body.email });
     if (!user) return res.status(400).json("Wrong email");
 
@@ -52,6 +61,10 @@ export const signin = async (req: Request, res: Response) => {
 
 export const profile = async (req: Request, res: Response) => {
   try {
+    const errors = validationResult(req.body);
+    if (!errors.isEmpty())
+      return res.status(400).json({ erros: errors.array() });
+
     const user = await User.findById(req.userId);
     if (!user) return res.status(404).json("User not found");
 
@@ -64,6 +77,10 @@ export const profile = async (req: Request, res: Response) => {
 
 export const profileName = async (req: Request, res: Response) => {
   try {
+    const errors = validationResult(req.body);
+    if (!errors.isEmpty())
+      return res.status(400).json({ erros: errors.array() });
+
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json("User not found");
 
@@ -76,6 +93,10 @@ export const profileName = async (req: Request, res: Response) => {
 
 export const changeRole = async (req: Request, res: Response) => {
   try {
+    const errors = validationResult(req.body);
+    if (!errors.isEmpty())
+      return res.status(400).json({ erros: errors.array() });
+
     const admin = await User.findById(req.userId);
     if (!admin || admin.role !== "super_administrator") {
       return res.status(401).json(`Access Denied`);
@@ -87,13 +108,17 @@ export const changeRole = async (req: Request, res: Response) => {
       res.json(`User: ${user.username} is now ${req.body.new_role}`);
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json("Internal Server Error");
   }
 };
 
 export const createModerator = async (req: Request, res: Response) => {
   try {
+    const errors = validationResult(req.body);
+    if (!errors.isEmpty())
+      return res.status(400).json({ erros: errors.array() });
+
     const admin = await User.findById(req.userId);
     const user = await User.findById(req.body.user_id);
     if (
@@ -107,13 +132,17 @@ export const createModerator = async (req: Request, res: Response) => {
       res.json(`User: ${user.username} is now moderator`);
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json("Internal Server Error");
   }
 };
 
 export const muteAuthor = async (req: Request, res: Response) => {
   try {
+    const errors = validationResult(req.body);
+    if (!errors.isEmpty())
+      return res.status(400).json({ erros: errors.array() });
+
     const admin = await User.findById(req.userId);
     const user = await User.findById(req.body.user_id);
     if (
@@ -127,7 +156,7 @@ export const muteAuthor = async (req: Request, res: Response) => {
       res.json(`User ${user.username} is muted now`);
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json("Internal Server Error");
   }
 };
