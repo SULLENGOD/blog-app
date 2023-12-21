@@ -1,8 +1,12 @@
-
 import { Request, Response } from "express";
 import User, { IUser } from "../models/user.model";
 import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
+import {
+  AuthenticationError,
+  NotFoundError,
+  UnauthorizedError,
+} from "../libs/errorHandling";
 
 /**
  * Registers a new user.
@@ -16,17 +20,9 @@ import { validationResult } from "express-validator";
  */
 export const signup = async (req: Request, res: Response) => {
   try {
-    const errors = validationResult(req.body);
-    if (!errors.isEmpty())
-      return res.status(400).json({ erros: errors.array() });
-
-    const user: IUser = new User({
-      username: req.body.username,
-      email: req.body.email,
-      password: req.body.password,
-    });
-
+    const user = new User(req.body);
     user.password = await user.encryptPassword(user.password);
+
     const savedUser = await user.save();
 
     const token: string = jwt.sign(
@@ -34,10 +30,14 @@ export const signup = async (req: Request, res: Response) => {
       process.env.TOKEN_SECRET || "defaultToken"
     );
 
-    res.header("auth-token", token).json(savedUser);
+    res.header("auth-token", token).json({ userId: savedUser._id });
   } catch (error) {
-    console.error("Error signing up:", error);
-    res.status(500).json("Internal Server Error");
+    if (error instanceof AuthenticationError) {
+      res.status(401).json({ message: error.message });
+    } else {
+      console.error("Error during sigin: ", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
   }
 };
 
@@ -54,17 +54,14 @@ export const signup = async (req: Request, res: Response) => {
  */
 export const signin = async (req: Request, res: Response) => {
   try {
-    const errors = validationResult(req.body);
-    if (!errors.isEmpty())
-      return res.status(400).json({ erros: errors.array() });
-
     const user = await User.findOne({ email: req.body.email });
-    if (!user) return res.status(400).json("Wrong email");
+    if (!user) {
+      throw new AuthenticationError("Invalid email or password");
+    }
 
-    const correctPassword: boolean = await user.validatePassword(
-      req.body.password
-    );
-    if (!correctPassword) return res.status(400).json("Invalid password");
+    if (!(await user.validatePassword(req.body.password))) {
+      throw new AuthenticationError("Invalid email or password");
+    }
 
     const token: string = jwt.sign(
       { _id: user._id },
@@ -74,10 +71,14 @@ export const signin = async (req: Request, res: Response) => {
       }
     );
 
-    res.header("auth-token", token).json(user);
+    res.header("auth-token", token).json({ userId: user._id });
   } catch (error) {
-    console.error("Error signing in:", error);
-    res.status(500).json("Internal Server Error");
+    if (error instanceof AuthenticationError) {
+      res.status(401).json({ message: error.message });
+    } else {
+      console.error("Error during sigin: ", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
   }
 };
 
@@ -94,17 +95,15 @@ export const signin = async (req: Request, res: Response) => {
  */
 export const profile = async (req: Request, res: Response) => {
   try {
-    const errors = validationResult(req.body);
-    if (!errors.isEmpty())
-      return res.status(400).json({ erros: errors.array() });
-
-    const user = await User.findById(req.userId);
-    if (!user) return res.status(404).json("User not found");
-
+    const user = await User.findById(req.userId, { password: 0 });
     res.json(user);
   } catch (error) {
-    console.error("Error fetching profile:", error);
-    res.status(500).json("Internal Server Error");
+    if (error instanceof AuthenticationError) {
+      res.status(401).json({ message: error.message });
+    } else {
+      console.error("Error fetching profile: ", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
   }
 };
 
@@ -121,17 +120,17 @@ export const profile = async (req: Request, res: Response) => {
  */
 export const profileName = async (req: Request, res: Response) => {
   try {
-    const errors = validationResult(req.body);
-    if (!errors.isEmpty())
-      return res.status(400).json({ erros: errors.array() });
-
     const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json("User not found");
+    if (!user) throw new NotFoundError("User not found");
 
     res.json(user.username);
   } catch (error) {
-    console.error("Error fetching profile name:", error);
-    res.status(500).json("Internal Server Error");
+    if (error instanceof NotFoundError) {
+      res.status(404).json({ message: error.message });
+    } else {
+      console.error("Error fetching Author name: ", error);
+      res.status(509).json({ message: "Internal server error" });
+    }
   }
 };
 
@@ -149,23 +148,23 @@ export const profileName = async (req: Request, res: Response) => {
  */
 export const changeRole = async (req: Request, res: Response) => {
   try {
-    const errors = validationResult(req.body);
-    if (!errors.isEmpty())
-      return res.status(400).json({ erros: errors.array() });
-
     const admin = await User.findById(req.userId);
     if (!admin || admin.role !== "super_administrator") {
-      return res.status(401).json(`Access Denied`);
-    } else {
-      const user = await User.findById(req.body.user_id);
-      if (!user) return res.status(404).json("User not found");
-      await user.updateOne({ role: req.body.new_role });
-
-      res.json(`User: ${user.username} is now ${req.body.new_role}`);
+      throw new UnauthorizedError("Access Denied");
     }
+    const user = await User.findById(req.body.user_id);
+    if (!user) return res.status(404).json("User not found");
+
+    await user.updateOne({ role: req.body.new_role });
+
+    res.json({ message: `User ${user.username} is now ${req.body.new_role}` });
   } catch (error) {
-    console.error(error);
-    res.status(500).json("Internal Server Error");
+    if (error instanceof UnauthorizedError) {
+      res.status(401).json({ message: error.message });
+    } else {
+      console.error("Error during role change:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
   }
 };
 
@@ -183,25 +182,26 @@ export const changeRole = async (req: Request, res: Response) => {
  */
 export const createModerator = async (req: Request, res: Response) => {
   try {
-    const errors = validationResult(req.body);
-    if (!errors.isEmpty())
-      return res.status(400).json({ erros: errors.array() });
-
     const admin = await User.findById(req.userId);
-    const user = await User.findById(req.body.user_id);
     if (
       !admin ||
-      (admin.role !== "super_administrator" && admin.role !== "administrator")
+      !["super_administrator", "administrator"].includes(admin.role)
     ) {
-      return res.status(401).json("Access Denied");
-    } else {
-      if (!user) return res.status(404).json("User not found");
-      await user.updateOne({ role: "moderator" });
-      res.json(`User: ${user.username} is now moderator`);
+      throw new UnauthorizedError("Access Denied");
     }
+
+    const user = await User.findById(req.body.user_id);
+    if (!user) throw new NotFoundError("User not found");
+
+    await user.updateOne({ role: "moderator" });
+    res.json({ message: `User: ${user.username} is now moderator` });
   } catch (error) {
-    console.error(error);
-    res.status(500).json("Internal Server Error");
+    if (error instanceof UnauthorizedError) {
+      res.status(401).json({ message: error.message });
+    } else {
+      console.error("Error creating moderator:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
   }
 };
 
@@ -219,24 +219,25 @@ export const createModerator = async (req: Request, res: Response) => {
  */
 export const muteAuthor = async (req: Request, res: Response) => {
   try {
-    const errors = validationResult(req.body);
-    if (!errors.isEmpty())
-      return res.status(400).json({ erros: errors.array() });
-
     const admin = await User.findById(req.userId);
-    const user = await User.findById(req.body.user_id);
     if (
       !admin ||
-      (admin.role !== "super_administrator" && admin.role !== "administrator")
+      !["super_administrator", "administrator"].includes(admin.role)
     ) {
-      return res.status(401).json("Access Denied");
-    } else {
-      if (!user) return res.status(404).json("User not found");
-      await user.updateOne({ muted: true });
-      res.json(`User ${user.username} is muted now`);
+      throw new UnauthorizedError('Access Denied');
     }
+    const user = await User.findById(req.body.user_id);
+    if (!user) throw new NotFoundError('User not found');
+
+    await user.updateOne({ muted: true });
+    res.json(`User ${user.username} is muted now`);
+
   } catch (error) {
-    console.error(error);
-    res.status(500).json("Internal Server Error");
+    if (error instanceof UnauthorizedError) {
+      res.status(401).json({ message: error.message });
+    } else {
+      console.error("Error creating moderator:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
   }
 };

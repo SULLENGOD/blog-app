@@ -7,6 +7,7 @@ const app: Application = express();
 import authRoutes from './routes/auth.routes';
 import postsRoutes from './routes/posts.routes';
 
+
 app.set('port', 3000);
 
 //middleware
