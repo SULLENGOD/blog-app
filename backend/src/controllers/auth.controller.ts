@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import User, { IUser } from "../models/user.model";
 import jwt from "jsonwebtoken";
-import { validationResult } from "express-validator";
 import {
   AuthenticationError,
   NotFoundError,
@@ -9,14 +8,12 @@ import {
 } from "../libs/errorHandling";
 
 /**
- * Registers a new user.
- *
- * @param {Request} req Express request object containing user data (username, email, password).
- * @param {Response} res Express response object.
- * @returns {Response} JSON response with saved user data (excluding password) on success, or error message on failure.
- *
- * @throws {400 Bad Request} If validation errors occur.
- * @throws {500 Internal Server Error} If any unexpected error occurs during signup.
+ * @summary Creates a new user account.
+ * @description Encrypts the password before saving it to the database.
+ * @param {Request} req - The Express request object.
+ * @param {Response} res - The Express response object.
+ * @returns {Response} A JSON response containing the user ID and auth token.
+ * @throws {AuthenticationError} If the email address is already in use.
  */
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -42,15 +39,11 @@ export const signup = async (req: Request, res: Response) => {
 };
 
 /**
- * Authenticates an existing user and generates a JWT token.
- *
- * @param {Request} req Express request object containing login credentials (email, password).
- * @param {Response} res Express response object.
- * @returns {Response} JSON response with user data and JWT token on success, or error message on failure.
- *
- * @throws {400 Bad Request} If validation errors occur or email is wrong.
- * @throws {400 Bad Request} If password is incorrect.
- * @throws {500 Internal Server Error} If any unexpected error occurs during login.
+ * @summary Authenticates a user and generates an auth token.
+ * @param {Request} req - The Express request object.
+ * @param {Response} res - The Express response object.
+ * @returns {Response} A JSON response containing the user ID and auth token.
+ * @throws {AuthenticationError} If the email or password is incorrect.
  */
 export const signin = async (req: Request, res: Response) => {
   try {
@@ -83,15 +76,12 @@ export const signin = async (req: Request, res: Response) => {
 };
 
 /**
- * Retrieves the currently logged-in user's profile information.
- *
- * @param {Request} req Express request object with user ID in headers or body.
- * @param {Response} res Express response object.
- * @returns {Response} JSON response with user data on success, or error message on failure.
- *
- * @throws {400 Bad Request} If validation errors occur.
- * @throws {404 Not Found} If the user with the provided ID is not found.
- * @throws {500 Internal Server Error} If any unexpected error occurs while fetching profile.
+ * @summary Retrieves the current user's profile information.
+ * @description Excludes the password field for security.
+ * @param {Request} req - The Express request object.
+ * @param {Response} res - The Express response object.
+ * @returns {Response} A JSON response containing the user's profile data.
+ * @throws {AuthenticationError} If the user is not authenticated.
  */
 export const profile = async (req: Request, res: Response) => {
   try {
@@ -108,15 +98,11 @@ export const profile = async (req: Request, res: Response) => {
 };
 
 /**
- * Retrieves the username of a specific user.
- *
- * @param {Request} req Express request object with user ID in URL parameters.
- * @param {Response} res Express response object.
- * @returns {Response} JSON response with the user's username on success, or error message on failure.
- *
- * @throws {400 Bad Request} If validation errors occur.
- * @throws {404 Not Found} If the user with the provided ID is not found.
- * @throws {500 Internal Server Error} If any unexpected error occurs while fetching username.
+ * @summary Retrieves a user's profile name by ID.
+ * @param {Request} req - The Express request object.
+ * @param {Response} res - The Express response object.
+ * @returns {Response} A JSON response containing the user's profile name.
+ * @throws {NotFoundError} If the user is not found.
  */
 export const profileName = async (req: Request, res: Response) => {
   try {
@@ -135,16 +121,13 @@ export const profileName = async (req: Request, res: Response) => {
 };
 
 /**
- * Changes the role of another user (requires super_administrator privileges).
- *
- * @param {Request} req Express request object with user ID and new role in body.
- * @param {Response} res Express response object.
- * @returns {Response} JSON response with a success message and updated username and role on success, or error message on failure.
- *
- * @throws {400 Bad Request} If validation errors occur.
- * @throws {401 Unauthorized} If the logged-in user is not a super_administrator.
- * @throws {404 Not Found} If the user with the provided ID is not found.
- * @throws {500 Internal Server Error} If any unexpected error occurs while changing role.
+ * @summary Changes a user's role.
+ * @description Requires super administrator privileges.
+ * @param {Request} req - The Express request object.
+ * @param {Response} res - The Express response object.
+ * @returns {Response} A JSON response confirming the role change.
+ * @throws {UnauthorizedError} If the user is not authorized to make the change.
+ * @throws {NotFoundError} If the user to be modified is not found.
  */
 export const changeRole = async (req: Request, res: Response) => {
   try {
@@ -169,16 +152,13 @@ export const changeRole = async (req: Request, res: Response) => {
 };
 
 /**
- * Promotes a user to moderator role.
- *
- * @param {Request} req Express request object containing the user ID to be promoted.
- * @param {Response} res Express response object.
- * @returns {Response} JSON response with a success message and updated username on success, or error message on failure.
- *
- * @throws {400 Bad Request} If validation errors occur in the request body.
- * @throws {401 Unauthorized} If the logged-in user is not authorized to promote (requires super_administrator or administrator role).
- * @throws {404 Not Found} If the user to be promoted is not found.
- * @throws {500 Internal Server Error} If any unexpected error occurs while updating the user role.
+ * @summary Creates a moderator account.
+ * @description Requires administrator or super administrator privileges.
+ * @param {Request} req - The Express request object.
+ * @param {Response} res - The Express response object.
+ * @returns {Response} A JSON response confirming the moderator creation.
+ * @throws {UnauthorizedError} If the user is not authorized to create moderators.
+ * @throws {NotFoundError} If the user to be modified is not found.
  */
 export const createModerator = async (req: Request, res: Response) => {
   try {
@@ -206,16 +186,13 @@ export const createModerator = async (req: Request, res: Response) => {
 };
 
 /**
- * Mutes a specific user.
- *
- * @param {Request} req Express request object containing the user ID to be muted.
- * @param {Response} res Express response object.
- * @returns {Response} JSON response with a success message and username on success, or error message on failure.
- *
- * @throws {400 Bad Request} If validation errors occur in the request body.
- * @throws {401 Unauthorized} If the logged-in user is not authorized to mute (requires super_administrator or administrator role).
- * @throws {404 Not Found} If the user to be muted is not found.
- * @throws {500 Internal Server Error} If any unexpected error occurs while updating the user's muted flag.
+ * @summary Mutes a user's authoring privileges.
+ * @description Requires administrator or super administrator privileges.
+ * @param {Request} req - The Express request object.
+ * @param {Response} res - The Express response object.
+ * @returns {Response} A JSON response confirming the muting action.
+ * @throws {UnauthorizedError} If the user is not authorized to mute authors.
+ * @throws {NotFoundError} If the user to be muted is not found.
  */
 export const muteAuthor = async (req: Request, res: Response) => {
   try {
