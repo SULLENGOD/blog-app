@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import Post, { IPost } from "../models/post.model";
-import User from "../models/user.model";
+import { IPost } from "../models/post.model";
 import {
   createPost,
   findPost,
