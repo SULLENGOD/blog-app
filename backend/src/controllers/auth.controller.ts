@@ -14,12 +14,13 @@ import {
 } from "../services/auth.service";
 
 /**
- * @summary Creates a new user account.
- * @description Encrypts the password before saving it to the database.
- * @param {Request} req - The Express request object.
- * @param {Response} res - The Express response object.
- * @returns {Response} A JSON response containing the user ID and auth token.
- * @throws {AuthenticationError} If the email address is already in use.
+ * Creates a new user account.
+ *
+ * @param req - The Express request object.
+ * @param res - The Express response object.
+ * @returns - A JSON response containing the user ID and authentication token.
+ * @throws AuthenticationError - If the signup credentials are invalid.
+ * @throws Error - If an unexpected error occurs during signup.
  */
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -37,11 +38,13 @@ export const signup = async (req: Request, res: Response) => {
 };
 
 /**
- * @summary Authenticates a user and generates an auth token.
- * @param {Request} req - The Express request object.
- * @param {Response} res - The Express response object.
- * @returns {Response} A JSON response containing the user ID and auth token.
- * @throws {AuthenticationError} If the email or password is incorrect.
+ * Authenticates a user and generates an authentication token.
+ *
+ * @param req - The Express request object.
+ * @param res - The Express response object.
+ * @returns - A JSON response containing the user ID and authentication token.
+ * @throws AuthenticationError - If the signin credentials are invalid.
+ * @throws Error - If an unexpected error occurs during signin.
  */
 export const signin = async (req: Request, res: Response) => {
   try {
@@ -59,12 +62,13 @@ export const signin = async (req: Request, res: Response) => {
 };
 
 /**
- * @summary Retrieves the current user's profile information.
- * @description Excludes the password field for security.
- * @param {Request} req - The Express request object.
- * @param {Response} res - The Express response object.
- * @returns {Response} A JSON response containing the user's profile data.
- * @throws {AuthenticationError} If the user is not authenticated.
+ * Retrieves the authenticated user's profile information.
+ *
+ * @param req - The Express request object.
+ * @param res - The Express response object.
+ * @returns - A JSON response containing the user's profile data.
+ * @throws AuthenticationError - If the user is not authenticated.
+ * @throws Error - If an unexpected error occurs while fetching the profile.
  */
 export const profile = async (req: Request, res: Response) => {
   try {
@@ -82,11 +86,13 @@ export const profile = async (req: Request, res: Response) => {
 };
 
 /**
- * @summary Retrieves a user's profile name by ID.
- * @param {Request} req - The Express request object.
- * @param {Response} res - The Express response object.
- * @returns {Response} A JSON response containing the user's profile name.
- * @throws {NotFoundError} If the user is not found.
+ * Retrieves the username of a specific user by ID.
+ *
+ * @param req - The Express request object.
+ * @param res - The Express response object.
+ * @returns - A JSON response containing the user's username.
+ * @throws NotFoundError - If the user with the specified ID is not found.
+ * @throws Error - If an unexpected error occurs while fetching the username.
  */
 export const profileName = async (req: Request, res: Response) => {
   try {
@@ -103,13 +109,13 @@ export const profileName = async (req: Request, res: Response) => {
 };
 
 /**
- * @summary Changes a user's role.
- * @description Requires super administrator privileges.
- * @param {Request} req - The Express request object.
- * @param {Response} res - The Express response object.
- * @returns {Response} A JSON response confirming the role change.
- * @throws {UnauthorizedError} If the user is not authorized to make the change.
- * @throws {NotFoundError} If the user to be modified is not found.
+ * Changes the role of a specified user.
+ *
+ * @param req - The Express request object.
+ * @param res - The Express response object.
+ * @returns - A JSON response confirming the role change.
+ * @throws UnauthorizedError - If the requesting user is not authorized to change roles.
+ * @throws Error - If an unexpected error occurs during the role change.
  */
 export const changeRole = async (req: Request, res: Response) => {
   try {
@@ -131,13 +137,13 @@ export const changeRole = async (req: Request, res: Response) => {
 };
 
 /**
- * @summary Creates a moderator account.
- * @description Requires administrator or super administrator privileges.
- * @param {Request} req - The Express request object.
- * @param {Response} res - The Express response object.
- * @returns {Response} A JSON response confirming the moderator creation.
- * @throws {UnauthorizedError} If the user is not authorized to create moderators.
- * @throws {NotFoundError} If the user to be modified is not found.
+ * Upgrades a specified user to the moderator role.
+ *
+ * @param req - The Express request object.
+ * @param res - The Express response object.
+ * @returns - A JSON response confirming the moderator upgrade.
+ * @throws UnauthorizedError - If the requesting user is not authorized to create moderators.
+ * @throws Error - If an unexpected error occurs during the moderator creation.
  */
 export const createModerator = async (req: Request, res: Response) => {
   try {
@@ -154,13 +160,13 @@ export const createModerator = async (req: Request, res: Response) => {
 };
 
 /**
- * @summary Mutes a user's authoring privileges.
- * @description Requires administrator or super administrator privileges.
- * @param {Request} req - The Express request object.
- * @param {Response} res - The Express response object.
- * @returns {Response} A JSON response confirming the muting action.
- * @throws {UnauthorizedError} If the user is not authorized to mute authors.
- * @throws {NotFoundError} If the user to be muted is not found.
+ * Mutes a specified author.
+ *
+ * @param req - The Express request object.
+ * @param res - The Express response object.
+ * @returns - A JSON response confirming the author mute.
+ * @throws UnauthorizedError - If the requesting user is not authorized to mute authors.
+ * @throws Error - If an unexpected error occurs during the mute operation.
  */
 export const muteAuthor = async (req: Request, res: Response) => {
   try {
