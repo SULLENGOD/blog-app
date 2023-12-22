@@ -1,58 +1,38 @@
 import { Request, Response } from "express";
 import Post, { IPost } from "../models/post.model";
 import User from "../models/user.model";
+import {
+  createPost,
+  findPost,
+  findPosts,
+  search,
+  deleteOne,
+  update,
+} from "../services/posts.service";
 
 /**
- * Creates a new post by the currently logged-in user.
- *
- * @param {Request} req Express request object containing post data (title, content, tags).
- * @param {Response} res Express response object.
- * @returns {Response} JSON response containing the saved post and updated user information (excluding password) on success, or error message on failure.
- *
- * @throws {401 Unauthorized} If the logged-in user is muted or unauthorized.
- * @throws {500 Internal Server Error} If any unexpected error occurs while creating the post.
+ * The function `newPost` creates a new post and associates it with a user, and then sends the created
+ * post and user as a response.
+ * @param {Request} req - The `req` parameter is an object representing the HTTP request made to the
+ * server. It contains information such as the request method, headers, URL, and body.
+ * @param {Response} res - The `res` parameter is an instance of the `Response` object from the
+ * Express.js framework. It represents the HTTP response that will be sent back to the client. It is
+ * used to send the response data, set response headers, and control the response status code.
  */
 export const newPost = async (req: Request, res: Response) => {
   try {
-    const user = await User.findById(req.userId, { password: 0 });
-    if (!user || user.muted) return res.status(401).json("Unauthorized");
+    const { post, user } = await createPost(req.userId, req.body);
 
-    const newPostData: IPost = {
-      title: req.body.title,
-      content: req.body.content,
-      createdAt: new Date(),
-      tags: req.body.tags,
-      author: user.toObject(),
-    };
-
-    const newPost = new Post(newPostData);
-    const savedPost = await newPost.save();
-
-    user.posts.push(savedPost._id.toString());
-    await user.save();
-
-    res.json([savedPost, user]);
+    res.json([post, user]);
   } catch (error) {
     console.error("Error creating post:", error);
     res.status(500).json("Internal Server Error");
   }
 };
 
-/**
- * Retrieves a specific post by its ID.
- *
- * @param {Request} req Express request object containing the post ID in URL parameters.
- * @param {Response} res Express response object.
- * @returns {Response} JSON response containing the requested post details on success, or error message on failure.
- *
- * @throws {404 Not Found} If the post with the provided ID is not found.
- * @throws {500 Internal Server Error} If any unexpected error occurs while fetching the post.
- */
-
 export const getPost = async (req: Request, res: Response) => {
   try {
-    const post = await Post.findById(req.params.id);
-    if (!post) return res.status(404).json("Post not found");
+    const post = await findPost(req.params.id);
 
     res.json(post);
   } catch (error) {
@@ -62,44 +42,18 @@ export const getPost = async (req: Request, res: Response) => {
 };
 
 /**
- * Retrieves all existing posts.
- *
- * @param {Request} req Express request object.
- * @param {Response} res Express response object.
- * @returns {Response} JSON response containing a list of all posts on success, or error message on failure.
- *
- * @throws {404 Not Found} If no posts are found.
- * @throws {500 Internal Server Error} If any unexpected error occurs while fetching posts.
- */
-export const getAllPosts = async (req: Request, res: Response) => {
-  try {
-    const posts = await Post.find();
-    if (!posts || posts.length === 0)
-      return res.status(404).json("Posts not found");
-
-    res.json(posts);
-  } catch (error) {
-    console.error("Error fetching posts:", error);
-    res.status(500).json("Internal Server Error");
-  }
-};
-
-/**
- * Retrieves a limited number of latest posts.
- *
- * @param {Request} req Express request object containing the desired number of posts in URL parameters.
- * @param {Response} res Express response object.
- * @returns {Response} JSON response containing a list of the requested number of posts on success, or an empty response on invalid limit.
- *
- * @throws {418 I'm a teapot} If the provided limit is invalid.
- * @throws {500 Internal Server Error} If any unexpected error occurs while fetching posts.
+ * The function `getPosts` is an asynchronous function that retrieves posts with an optional limit from
+ * a database and sends the retrieved posts as a JSON response.
+ * @param {Request} req - The `req` parameter is an object that represents the HTTP request made by the
+ * client. It contains information such as the request method, headers, query parameters, and body.
+ * @param {Response} res - The `res` parameter is an instance of the `Response` object from the
+ * Express.js framework. It represents the HTTP response that will be sent back to the client.
  */
 export const getPosts = async (req: Request, res: Response) => {
   try {
-    const limit = parseInt(req.params.limit);
-    if (!limit) return res.status(418).json();
+    const limit = parseInt(req.query.limit as string) || 0;
+    const posts = await findPosts(limit);
 
-    const posts = await Post.find().limit(limit);
     res.json(posts);
   } catch (error) {
     console.error("Error fetching posts:", error);
@@ -108,23 +62,24 @@ export const getPosts = async (req: Request, res: Response) => {
 };
 
 /**
- * Searches for posts matching a specific keyword in their title.
- *
- * @param {Request} req Express request object containing the search keyword in URL parameters.
- * @param {Response} res Express response object.
- * @returns {Response} JSON response containing a list of matching posts on success, or an empty response on an empty query.
- *
- * @throws {418 I'm a teapot} If the provided query is empty.
- * @throws {500 Internal Server Error} If any unexpected error occurs while searching posts.
+ * The function `getSearch` is an asynchronous function that handles a search request by retrieving
+ * posts related to the search query and returning them as a JSON response.
+ * @param {Request} req - The `req` parameter is an object that represents the HTTP request made to the
+ * server. It contains information such as the request method, headers, query parameters, and body.
+ * @param {Response} res - The `res` parameter is the response object that is used to send the response
+ * back to the client. It contains methods and properties that allow you to control the response, such
+ * as setting the status code, headers, and sending the response body.
+ * @returns a JSON response with the search results (posts) if the search query is provided. If there
+ * is no search query, it returns a 418 status code (I'm a teapot) without any response body. If there
+ * is an error during the search process, it returns a 500 status code (Internal Server Error) with a
+ * response body of "Internal Server Error".
  */
 export const getSearch = async (req: Request, res: Response) => {
   try {
     const query = req.params.search;
     if (!query) return res.status(418).json();
 
-    const posts = await Post.find({
-      title: { $regex: new RegExp(query, "i") },
-    });
+    const posts = await search(query);
     res.json(posts);
   } catch (error) {
     console.error("Error searching posts:", error);
@@ -132,55 +87,29 @@ export const getSearch = async (req: Request, res: Response) => {
   }
 };
 
-/*
- * Deletes a specific post and removes its reference from the author's list.
- *
- * @param {Request} req Express request object containing the post ID in URL parameters.
- * @param {Response} res Express response object.
- * @returns {Response} JSON response containing an updated list of the logged-in user's posts on success, or error message on failure.
- *
- * @throws {401 Unauthorized} If the logged-in user is not the post author.
- * @throws {500 Internal Server Error} If any unexpected error occurs while deleting the post.
+/**
+ * The function `deletePost` is an asynchronous function that deletes a post and returns the updated
+ * list of posts, or an error message if there is an error.
+ * @param {Request} req - The `req` parameter is an object that represents the HTTP request made by the
+ * client. It contains information such as the request method, request headers, request body, request
+ * parameters, etc.
+ * @param {Response} res - The `res` parameter is the response object that is used to send the response
+ * back to the client. It contains methods and properties that allow you to control the response, such
+ * as `json()` to send a JSON response, `status()` to set the status code of the response, and `send
  */
 export const deletePost = async (req: Request, res: Response) => {
   try {
-    const user = await User.findById(req.userId, { password: 0 });
-    if (!user) return res.status(401).json("Unauthorized");
+    const posts = await deleteOne(req.userId, req.params.id);
 
-    await Post.deleteOne({ _id: req.params.id });
-
-    const posts = user.posts;
-    const index = posts.indexOf(req.params.id);
-
-    if (index !== -1) {
-      posts.splice(index, 1);
-      user.posts = posts;
-      user.save();
-    }
-
-    res.json(user.posts);
+    res.json(posts);
   } catch (error) {
     console.error("Error deleting post:", error);
     res.status(500).json("Internal Server Error");
   }
 };
 
-/**
- * Updates an existing post with the provided data, only allowing modifications by the post author.
- *
- * @param {Request} req Express request object containing the post data (ID, title, content, tags) for update.
- * @param {Response} res Express response object.
- * @returns {Response} JSON response containing the updated post details on success, or error message on failure.
- *
- * @throws {401 Unauthorized} If the logged-in user is not the post author.
- * @throws {404 Not Found} If the post with the provided ID is not found.
- * @throws {500 Internal Server Error} If any unexpected error occurs while updating the post.
- */
 export const updatePost = async (req: Request, res: Response) => {
   try {
-    const user = await User.findById(req.userId, { password: 0 });
-    if (!user) return res.status(401).json("Unauthorized");
-
     const updatedPostData: IPost = {
       _id: req.body._id,
       title: req.body.title,
@@ -189,11 +118,7 @@ export const updatePost = async (req: Request, res: Response) => {
       tags: req.body.tags,
     };
 
-    const renewedPost = await Post.findOneAndUpdate(
-      { _id: req.body._id },
-      updatedPostData,
-      { new: true }
-    );
+    const renewedPost = await update(req.userId, updatedPostData);
 
     res.json(renewedPost);
   } catch (error) {
