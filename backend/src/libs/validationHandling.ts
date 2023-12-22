@@ -19,7 +19,6 @@ export const validateSignup = (req: Request, res: Response, next: NextFunction) 
     body('username').notEmpty().trim();
     
     const errors = validationResult(req);
-    console.log(errors);
     if(!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
     }
@@ -31,7 +30,6 @@ export const validateId = (req: Request, res: Response, next: NextFunction) => {
     check('userId').notEmpty().trim();
     
     const errors = validationResult(req);
-    console.log(errors);
     if(!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});
     }

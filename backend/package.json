@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\""
   },
-  "author": "",
+  "author": "Sullen",
   "license": "ISC",
   "dependencies": {
     "@types/cors": "^2.8.17",

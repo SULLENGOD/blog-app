@@ -1,11 +1,17 @@
 import { Request, Response } from "express";
-import User, { IUser } from "../models/user.model";
-import jwt from "jsonwebtoken";
 import {
   AuthenticationError,
   NotFoundError,
   UnauthorizedError,
 } from "../libs/errorHandling";
+import {
+  authenticateUser,
+  modifyRole,
+  muteAnAuthor,
+  newUser,
+  upgradeToModerator,
+  userInfo,
+} from "../services/auth.service";
 
 /**
  * @summary Creates a new user account.
@@ -17,17 +23,9 @@ import {
  */
 export const signup = async (req: Request, res: Response) => {
   try {
-    const user = new User(req.body);
-    user.password = await user.encryptPassword(user.password);
+    const { token, userId } = await newUser(req.body);
 
-    const savedUser = await user.save();
-
-    const token: string = jwt.sign(
-      { _id: savedUser._id },
-      process.env.TOKEN_SECRET || "defaultToken"
-    );
-
-    res.header("auth-token", token).json({ userId: savedUser._id });
+    res.header("auth-token", token).json({ userId: userId });
   } catch (error) {
     if (error instanceof AuthenticationError) {
       res.status(401).json({ message: error.message });
@@ -47,24 +45,9 @@ export const signup = async (req: Request, res: Response) => {
  */
 export const signin = async (req: Request, res: Response) => {
   try {
-    const user = await User.findOne({ email: req.body.email });
-    if (!user) {
-      throw new AuthenticationError("Invalid email or password");
-    }
+    const { token, userId } = await authenticateUser(req.body);
 
-    if (!(await user.validatePassword(req.body.password))) {
-      throw new AuthenticationError("Invalid email or password");
-    }
-
-    const token: string = jwt.sign(
-      { _id: user._id },
-      process.env.TOKEN_SECRET || "defaultToken",
-      {
-        expiresIn: 60 * 60 * 24,
-      }
-    );
-
-    res.header("auth-token", token).json({ userId: user._id });
+    res.header("auth-token", token).json({ userId: userId });
   } catch (error) {
     if (error instanceof AuthenticationError) {
       res.status(401).json({ message: error.message });
@@ -85,7 +68,8 @@ export const signin = async (req: Request, res: Response) => {
  */
 export const profile = async (req: Request, res: Response) => {
   try {
-    const user = await User.findById(req.userId, { password: 0 });
+    const user = await userInfo(req.userId);
+
     res.json(user);
   } catch (error) {
     if (error instanceof AuthenticationError) {
@@ -106,9 +90,7 @@ export const profile = async (req: Request, res: Response) => {
  */
 export const profileName = async (req: Request, res: Response) => {
   try {
-    const user = await User.findById(req.params.id);
-    if (!user) throw new NotFoundError("User not found");
-
+    const user = await userInfo(req.params.id);
     res.json(user.username);
   } catch (error) {
     if (error instanceof NotFoundError) {
@@ -131,14 +113,11 @@ export const profileName = async (req: Request, res: Response) => {
  */
 export const changeRole = async (req: Request, res: Response) => {
   try {
-    const admin = await User.findById(req.userId);
-    if (!admin || admin.role !== "super_administrator") {
-      throw new UnauthorizedError("Access Denied");
-    }
-    const user = await User.findById(req.body.user_id);
-    if (!user) return res.status(404).json("User not found");
-
-    await user.updateOne({ role: req.body.new_role });
+    const user = await modifyRole(
+      req.userId,
+      req.body.user_id,
+      req.body.new_role
+    );
 
     res.json({ message: `User ${user.username} is now ${req.body.new_role}` });
   } catch (error) {
@@ -162,18 +141,7 @@ export const changeRole = async (req: Request, res: Response) => {
  */
 export const createModerator = async (req: Request, res: Response) => {
   try {
-    const admin = await User.findById(req.userId);
-    if (
-      !admin ||
-      !["super_administrator", "administrator"].includes(admin.role)
-    ) {
-      throw new UnauthorizedError("Access Denied");
-    }
-
-    const user = await User.findById(req.body.user_id);
-    if (!user) throw new NotFoundError("User not found");
-
-    await user.updateOne({ role: "moderator" });
+    const user = await upgradeToModerator(req.userId, req.body.user_id);
     res.json({ message: `User: ${user.username} is now moderator` });
   } catch (error) {
     if (error instanceof UnauthorizedError) {
@@ -196,19 +164,8 @@ export const createModerator = async (req: Request, res: Response) => {
  */
 export const muteAuthor = async (req: Request, res: Response) => {
   try {
-    const admin = await User.findById(req.userId);
-    if (
-      !admin ||
-      !["super_administrator", "administrator"].includes(admin.role)
-    ) {
-      throw new UnauthorizedError('Access Denied');
-    }
-    const user = await User.findById(req.body.user_id);
-    if (!user) throw new NotFoundError('User not found');
-
-    await user.updateOne({ muted: true });
+    const user = await muteAnAuthor(req.userId, req.body.user_id);
     res.json(`User ${user.username} is muted now`);
-
   } catch (error) {
     if (error instanceof UnauthorizedError) {
       res.status(401).json({ message: error.message });
