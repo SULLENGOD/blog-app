@@ -6,6 +6,13 @@ import {
   UnauthorizedError,
 } from "../libs/errorHandling";
 
+const findUser = async (userId: string) => {
+  const user = await User.findById(userId, { password: 0, __v: 0 });
+  if (!user) throw new UnauthorizedError("Access Denied");
+
+  return user;
+}
+
 /**
  * The `createPost` function creates a new post with the provided data and associates it with the
  * specified user.
@@ -17,8 +24,8 @@ import {
  * post object, and the "user" property contains the updated user object.
  */
 export const createPost = async (userId: string, postData: IPost) => {
-  const user = await User.findById(userId, { password: 0, __v: 0 });
-  if (!user) throw new UnauthorizedError("Access Denied");
+  
+  const user = await findUser(userId);
 
   const newPostData: IPost = {
     title: postData.title,
@@ -102,8 +109,7 @@ export const search = async (query: string) => {
  * @returns the updated list of posts for the user after deleting a post.
  */
 export const deleteOne = async (userId: string, postId: string) => {
-  const user = await User.findById(userId, { password: 0, __v: 0 });
-  if (!user) throw new UnauthorizedError("Access Denied");
+  const user = await findUser(userId);
 
   await Post.deleteOne({ _id: postId });
 
@@ -127,8 +133,7 @@ export const deleteOne = async (userId: string, postId: string) => {
  * @returns the updated post object.
  */
 export const update = async (userId: string, postData: IPost) => {
-  const user = await User.findById(userId, { password: 0, _v: 0 });
-  if (!user) throw new AuthenticationError("Access Denied");
+  const user = await findUser(userId);
 
   const renewedPost = await Post.findByIdAndUpdate(
     { _id: postData._id },

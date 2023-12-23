@@ -6,9 +6,11 @@ import {
 } from "../libs/errorHandling";
 import {
   authenticateUser,
+  deleteAuthor,
   modifyRole,
   muteAnAuthor,
   newUser,
+  updateAuthorInfo,
   upgradeToModerator,
   userInfo,
 } from "../services/auth.service";
@@ -172,6 +174,34 @@ export const muteAuthor = async (req: Request, res: Response) => {
   try {
     const user = await muteAnAuthor(req.userId, req.body.user_id);
     res.json(`User ${user.username} is muted now`);
+  } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      res.status(401).json({ message: error.message });
+    } else {
+      console.error("Error creating moderator:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+};
+
+export const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const userDelated = await deleteAuthor(req.userId, req.params.id);
+    res.json({ message: `User: ${userDelated} is delated now` });
+  } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      res.status(401).json({ message: error.message });
+    } else {
+      console.error("Error creating moderator:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+};
+
+export const updateUserInfo = async (req: Request, res: Response) => {
+  try {
+    const updatedUser = updateAuthorInfo(req.userId, req.body);
+    res.json(updatedUser);
   } catch (error) {
     if (error instanceof UnauthorizedError) {
       res.status(401).json({ message: error.message });

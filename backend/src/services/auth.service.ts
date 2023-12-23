@@ -6,6 +6,13 @@ import {
 import User, { IUser } from "../models/user.model";
 import jwt from "jsonwebtoken";
 
+const findUser = async (userId: string) => {
+  const user = await User.findById(userId);
+  if (!user) throw new NotFoundError("User not found.");
+
+  return user;
+};
+
 /**
  * The function creates a new user, encrypts their password, saves the user to the database, generates
  * a token, and returns the token and user ID.
@@ -151,4 +158,24 @@ export const muteAnAuthor = async (adminId: string, userId: string) => {
   await user.updateOne({ muted: true });
 
   return user;
+};
+
+export const deleteAuthor = async (adminId: string, userId: string) => {
+  const admin = await User.findById(adminId);
+  if (!admin || admin.role !== "super_administrator") {
+    throw new UnauthorizedError("Access Denied");
+  }
+
+  const user = await findUser(userId);
+
+  await user.deleteOne({ _id: userId });
+
+  return user.username;
+};
+
+export const updateAuthorInfo = async (userId: string, userInfo: IUser) => {
+  const user = await findUser(userId);
+  const updatedUser = await user.updateOne(userInfo);
+
+  return updatedUser;
 };
