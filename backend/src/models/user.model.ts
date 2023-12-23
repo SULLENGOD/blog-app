@@ -3,13 +3,17 @@ import bcrypt from 'bcrypt';
 
 export interface IUser extends Document {
     username: string;
+    name: string;
     password: string;
     email: string;
+    bio: string;
     encryptPassword(password: string): Promise<string>;
     validatePassword(password: string): Promise<boolean>;
     posts: string[];
     role: 'super_administrator' | 'administrator' | 'moderator' | 'user';
     muted: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 };
 
 const userSchema = new Schema ({
@@ -17,6 +21,14 @@ const userSchema = new Schema ({
         type: String,
         required: true,
         min: 4,
+        lowercase: true,
+        unique: true
+    },
+
+    name: {
+        type: String,
+        required: false,
+        min: 2,
         lowercase: true
     },
 
@@ -30,6 +42,11 @@ const userSchema = new Schema ({
     password: {
         type: String,
         required: true
+    },
+
+    bio: {
+        type: String,
+        required: false,
     },
 
     posts: [{

@@ -22,6 +22,8 @@ const findUser = async (userId: string) => {
  * token generated using the user's ID, and the "userId" property contains the ID of the saved user.
  */
 export const newUser = async (userData: IUser) => {
+  userData.createdAt = new Date();
+  console.log(userData)
   const newUser = new User(userData);
   newUser.password = await newUser.encryptPassword(newUser.password);
 
@@ -174,6 +176,7 @@ export const deleteAuthor = async (adminId: string, userId: string) => {
 };
 
 export const updateAuthorInfo = async (userId: string, userInfo: IUser) => {
+  userInfo.updatedAt = new Date();
   const user = await findUser(userId);
   const updatedUser = await user.updateOne(userInfo);
 
