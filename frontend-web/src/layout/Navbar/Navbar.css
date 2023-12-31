@@ -1,0 +1,16 @@
+.text {
+    color: #cbcbcb;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    
+}
+
+.text:hover {
+    color: #6c6c6c;
+}
+
+.eye-logo {
+    height: 35px;
+    width: 35px;
+    padding: 5px;
+}
