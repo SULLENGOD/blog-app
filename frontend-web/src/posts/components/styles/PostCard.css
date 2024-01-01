@@ -1,0 +1,21 @@
+.card {
+    background-color: transparent;
+    width: 15rem;
+    border: none;
+}
+
+.text-card {
+    color: #cbcbcb;
+}
+
+.text-content {
+    font-size: small;
+}
+
+.text-date {
+    font-size: x-small;
+}
+
+.card-image {
+    height: 15rem;
+}
