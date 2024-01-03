@@ -10,7 +10,7 @@ const PostsList = () => {
 
     
   return (
-    <div className="d-flex flex-wrap justify-content-center gap-3 p-0 mt-3">
+    <div className="flex flex-wrap justify-center">
         {
             isLoading ? (
               <div>

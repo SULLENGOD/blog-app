@@ -1,6 +1,5 @@
 import { Post } from "../../hooks/usePosts";
 import PostLoader from "../../layout/PostLoader/PostLoader";
-import TextIcon from "../../assets/align-box-left-bottom-filled.svg";
 import StockImage from "../../assets/stock-image.png";
 import "./styles/PostCard.css";
 
@@ -14,7 +13,7 @@ interface Porps {
 const PostCard = ({ info }: Porps) => {
   const { post } = info;
 
-  const { title, createdAt, content, featuredImage, tags } = post;
+  const { title, createdAt, featuredImage, tags } = post;
 
   const dateObj = new Date(createdAt);
 
@@ -23,51 +22,39 @@ const PostCard = ({ info }: Porps) => {
     year: "numeric",
   });
 
-  const truncatedContent =
-    content.length > 75 ? content.slice(0, 75) + "..." : content;
-
   console.log(featuredImage);
 
   return (
-    <div className="rounded">
+    <div className="p-5 border-[#807b76] border flex flex-col justify-between">
       {!post ? (
         <PostLoader />
       ) : (
         <article className="m-1 article">
-          <div className="card shadow">
+          <div className="card">
             <img
               src={featuredImage == undefined ? StockImage : featuredImage}
               alt="Stock"
-              className="card-image"
+              className=""
             />
-            <div className="card-body">
-              <h5 className="card-title text-card">{title}</h5>
+            <div className="flex flex-col justify-between text-balance">
               <time
                 dateTime={createdAt.toString()}
-                className="text-muted text-date"
+                className="text-[#807b76] text-vs"
               >
                 {date}
               </time>
-              <p className="text-card text-content">{truncatedContent}</p>
-            </div>
-            <div className="d-flex flex-row-reverse justify-content-between">
-              <span className="p-1">
-                <img src={TextIcon} alt="Text" />
-              </span>
-              <div>
-                {tags.map((tag, index) => (
-                  <span
-                    className="p-1 m-2 text-tags"
-                    key={index}
-                  >
-                    #{tag}
-                  </span>
-                ))}
-              </div>
+              <h5 className="text-white-paper mb-3 text-xs">{title}</h5>
             </div>
           </div>
         </article>
       )}
+      <div className="flex gap-2">
+        {tags.map((tag, index) => (
+          <span className="p-1 text-white-paper text-vs" key={index}>
+            #{tag}
+          </span>
+        ))}
+      </div>
     </div>
   );
 };
