@@ -32,6 +32,9 @@ export const createPost = async (userId: string, postData: IPost) => {
     content: postData.content,
     createdAt: new Date(),
     tags: postData.tags,
+    categories: postData.categories,
+    featuredImage: postData.featuredImage,
+    status: postData.status,
     author: {_id: user._id, username: user.username},
   };
 

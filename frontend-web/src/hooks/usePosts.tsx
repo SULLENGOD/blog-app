@@ -11,8 +11,10 @@ export interface Post {
   _id: string;
   title: string;
   content: string;
-  createdAt: Date;
+  featuredImage: string;
   tags: string[];
+  categories: string[];
+  createdAt: Date;
 }
 
 export const usePosts = () => {
@@ -22,6 +24,7 @@ export const usePosts = () => {
   const getAllPosts = async () => {
     try {
       const result = await getPots();
+      result.reverse();
       setPosts(result);
       setIsLoading(false);
     } catch (err) {

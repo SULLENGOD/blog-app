@@ -6,9 +6,11 @@ import PostLoader from "../../layout/PostLoader/PostLoader";
 const PostsList = () => {
     const {posts, isLoading} = useContext<PostsContextData>(PostsContext);
 
+    console.log(posts);
+
     
   return (
-    <div className="d-flex flex-wrap justify-content-center gap-3 p-5 mt-3">
+    <div className="d-flex flex-wrap justify-content-center gap-3 p-0 mt-3">
         {
             isLoading ? (
               <div>
