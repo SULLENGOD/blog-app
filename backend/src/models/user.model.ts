@@ -2,7 +2,8 @@ import { Schema, model, Document, ObjectId, Types } from "mongoose";
 import bcrypt from "bcrypt";
 
 export interface IUser extends Document {
-  username: ObjectId;
+  _id?: ObjectId;
+  username: string;
   name: string;
   password: string;
   email: string;
@@ -61,7 +62,7 @@ const userSchema = new Schema({
 
   posts: [
     {
-      type: Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Post",
     },
   ],
