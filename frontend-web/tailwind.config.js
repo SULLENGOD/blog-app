@@ -13,7 +13,10 @@ export default {
       colors: {
         'white-paper': '#fff5eb',
         'black-paper': '#070707',
-        'white-line': '#dcdcdc'
+        'black-paper-50': '#838383',
+        'white-line': '#dcdcdc',
+        'white-paper-50':'#807b76',
+        'white-paper-20': '#ccc4bc'
       },
       fontSize: {
         'vs': '0.6rem'

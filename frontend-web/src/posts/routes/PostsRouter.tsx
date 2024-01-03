@@ -7,7 +7,7 @@ const PostsRouter = () => {
   return (
     <>
         <Navbar />
-        <div className="flex">
+        <div className="flex justify-center">
             <Routes>
                 <Route path="post/:id" element={<PostPage />}/>
                 <Route path="/" element={<PostsPage />} />
