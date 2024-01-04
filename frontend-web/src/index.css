@@ -9,7 +9,7 @@
  
 /* Track */
 ::-webkit-scrollbar-track {
-    background: #202020;
+    background: transparent;
 }
  
 /* Handle */

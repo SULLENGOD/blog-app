@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getPots } from "../helpers/fetchPosts";
+import { getPost, getPots } from "../helpers/fetchPosts";
 
 export interface Author {
   _id: string;
@@ -42,3 +42,28 @@ export const usePosts = () => {
     isLoading,
   };
 };
+
+export const usePost = (id: string) => {
+  const [post, setPost] = useState<Post | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const findPost = async () => {
+    try {
+      const result = await getPost(id);
+      setPost(result);
+      setIsLoading(false);
+    } catch (error) {
+      console.error(error);
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    findPost();
+  }, []);
+
+  return {
+    post,
+    isLoading
+  }
+}

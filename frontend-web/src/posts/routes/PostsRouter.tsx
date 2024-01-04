@@ -9,7 +9,7 @@ const PostsRouter = () => {
         <Navbar />
         <div className="flex justify-center">
             <Routes>
-                <Route path="post/:id" element={<PostPage />}/>
+                <Route path="posts/:id" element={<PostPage />}/>
                 <Route path="/" element={<PostsPage />} />
             </Routes>
         </div>

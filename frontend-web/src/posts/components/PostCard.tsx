@@ -23,8 +23,6 @@ const PostCard = ({ info }: Porps) => {
     year: "numeric",
   });
 
-  console.log(featuredImage);
-
   return (
       <Link to={`/posts/${_id}`} >
         <div className="p-5 flex flex-col justify-between hover:bg-white-paper-20 border-y border-white-paper-20 bg-[#33312f] group transition-all max-h-60">
