@@ -25,7 +25,7 @@ const PostCard = ({ info }: Porps) => {
 
   return (
       <Link to={`/posts/${_id}`} >
-        <div className="p-5 flex flex-col justify-between hover:bg-white-paper-20 border-y border-white-paper-20 bg-[#33312f] group transition-all max-h-60">
+        <div className="p-5 flex flex-col justify-between hover:bg-black-paper-90  border-black-paper border-b bg-white-paper-20 group transition-all max-h-[240px]">
           {!info ? (
             <PostLoader />
           ) : (
@@ -39,11 +39,11 @@ const PostCard = ({ info }: Porps) => {
                 <div className="flex flex-col justify-between text-balance">
                   <time
                     dateTime={createdAt.toString()}
-                    className="text-white-paper-50 text-vs"
+                    className="text-black-paper-50 text-vs"
                   >
                     {date}
                   </time>
-                  <h5 className="text-white-paper mb-3 text-xs group-hover:text-black-paper">
+                  <h5 className="text-black-paper mb-3 text-xs group-hover:text-white-paper">
                     {title}
                   </h5>
                 </div>
@@ -53,7 +53,7 @@ const PostCard = ({ info }: Porps) => {
           <div className="flex gap-2">
             {tags.map((tag, index) => (
               <span
-                className="p-1 text-white-paper text-vs group-hover:text-black-paper"
+                className="p-1 text-black-paper text-vs group-hover:text-white-paper"
                 key={index}
               >
                 #{tag}

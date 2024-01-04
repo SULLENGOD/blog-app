@@ -7,7 +7,7 @@ const BlogRouter = () => {
   return (
       <Routes>
         <Route path="/*"  element={<PostsRouter />} />
-        <Route path="profile" element={<AuthRouter />} />
+        <Route path="account/*" element={<AuthRouter />} />
         <Route path="search" element={<SearchRouter />} />
       </Routes>
   );

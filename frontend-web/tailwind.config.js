@@ -14,6 +14,7 @@ export default {
         'white-paper': '#fff5eb',
         'black-paper': '#070707',
         'black-paper-50': '#838383',
+        'black-paper-90': '#202020',
         'white-line': '#dcdcdc',
         'white-paper-50':'#807b76',
         'white-paper-20': '#ccc4bc'

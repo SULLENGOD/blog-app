@@ -7,9 +7,8 @@ const PostsPage = () => {
 
   return (
     <PostsContext.Provider value={{ posts, isLoading }}>
-      <section className="flex justify-center flex-col">
-        <h1 className="text-white-paper text-center p-5">Recent Posts</h1>
-        <PostsList />
+      <section className="max-w-xl border-x bg-white-paper-20">
+          <PostsList />
       </section>
     </PostsContext.Provider>
   );

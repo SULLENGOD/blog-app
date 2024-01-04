@@ -9,7 +9,7 @@ const Navbar = () => {
       <nav className="flex gap-3">
         <NavLink to="/" className="text-white-paper hover:text-white-paper-50 transition-all self-center">Home</NavLink>
         <NavLink to="/search" className="text-white-paper hover:text-white-paper-50 transition-all self-center">Search</NavLink>
-        <NavLink to="/profile" className="text-white-paper hover:text-white-paper-50 transition-all self-center">Profile</NavLink>
+        <NavLink to="/account/login" className="text-white-paper hover:text-white-paper-50 transition-all self-center">Profile</NavLink>
       </nav>
     </header>
   );
