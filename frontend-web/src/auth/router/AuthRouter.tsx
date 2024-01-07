@@ -11,7 +11,7 @@ const AuthRouter = () => {
       <div className="flex justify-center">
         <Routes>
           <Route path="login" element={<Login />} />
-          <Route path="user/:id" element={<Profile />} />
+          <Route path="/:id" element={<Profile />} />
         </Routes>
       </div>
     </>

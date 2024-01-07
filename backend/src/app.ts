@@ -11,7 +11,7 @@ import postsRoutes from './routes/posts.routes';
 app.set('port', 3000);
 
 //middleware
-app.use(cors());
+app.use(cors({exposedHeaders: ['auth-token']}));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
