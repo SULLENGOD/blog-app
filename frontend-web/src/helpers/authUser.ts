@@ -18,4 +18,18 @@ export const authenticate = async (body: BodyLogin) => {
         res,
         data
     };
+};
+
+export const profile = async (token: string) => {
+    const url = 'http://localhost:3000/v1/auth/profile';
+    const res = await fetch(url, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "auth-token": token
+        }
+    });
+    const data = await res.json();
+
+    return data;
 }
