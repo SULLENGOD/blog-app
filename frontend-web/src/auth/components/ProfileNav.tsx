@@ -6,7 +6,7 @@ const ProfileNav = () => {
 
   return (
     <div className="m-3">
-      <nav className="flex gap-2">
+      <nav className="flex justify-around gap-2">
         <button
           onClick={() => setSection("profile")}
           className={

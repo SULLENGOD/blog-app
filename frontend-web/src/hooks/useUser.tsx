@@ -5,6 +5,8 @@ import { Post } from "./usePosts";
 export interface Profile {
     email: string;
     username: string;
+    bio: string;
+    role: string;
     avatarUrl: string;
     drafts: string[];
     muted: boolean;
