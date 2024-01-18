@@ -1,9 +1,9 @@
-import { useContext } from "react";
+import { FC, useContext } from "react";
 import PostCard from "./PostCard";
 import { PostsContext, PostsContextData } from "../context/PostsContext";
 import PostLoader from "../../layout/PostLoader/PostLoader";
 
-const PostsList = () => {
+const PostsList: FC = () => {
   const { posts, isLoading } = useContext<PostsContextData>(PostsContext);
 
   return (

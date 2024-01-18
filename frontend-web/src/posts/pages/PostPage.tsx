@@ -1,11 +1,16 @@
 import { useParams } from "react-router-dom";
 import { usePost } from "../../hooks/usePosts";
 import PostLoader from "../../layout/PostLoader/PostLoader";
+import { Post } from "../../hooks/usePosts";
+import { FC } from "react";
+import PostContent from "../components/PostContent";
 
-const PostPage = () => {
-  const { id } = useParams();
+interface PostPageProps {}
 
-  const { post, isLoading } = usePost(id);
+const PostPage: FC<PostPageProps> = () => {
+  const { id }: { id: string } = useParams();
+
+  const { post, isLoading }: { post: Post | null; isLoading: boolean } = usePost(id);
 
   return (
     <div className="max-w-lg">
@@ -18,26 +23,7 @@ const PostPage = () => {
             alt="Image"
             className=" border-b-white-paper border-x"
           />
-          <div className="p-3 border-x">
-            <h1 className="text-center text-white-paper text-2xl">
-              {post?.title}
-            </h1>
-            <h2 className="text-white-paper-50/[.5] text-sm text-right p-1">
-              Writed by: {post?.author.username}
-            </h2>
-          </div>
-          <div className="bg-white-paper-20">
-            <p className="text-black-paper p-5 text-wrap">{post?.content}</p>
-          </div>
-          <div className="bg-white-paper-50 p-5">
-            <div className="flex gap-2">
-              {post?.tags.map((tag, index) => (
-                <p key={index} className="text-black-paper">
-                  #{tag}
-                </p>
-              ))}
-            </div>
-          </div>
+         <PostContent post={post} />
         </article>
       )}
     </div>

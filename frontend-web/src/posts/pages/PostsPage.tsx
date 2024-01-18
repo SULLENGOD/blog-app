@@ -1,8 +1,11 @@
+import { FC } from "react";
 import { usePosts } from "../../hooks/usePosts";
 import PostsList from "../components/PostsList";
 import { PostsContext } from "../context/PostsContext";
 
-const PostsPage = () => {
+interface PostsPageProps {}
+
+const PostsPage: FC<PostsPageProps> = () => {
   const { posts, isLoading } = usePosts();
 
   return (
