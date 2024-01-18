@@ -3,6 +3,10 @@ interface BodyLogin {
     password: string;
 }
 
+interface BodyBio {
+    bio: string;
+}
+
 export const authenticate = async (body: BodyLogin) => {
     const url = 'http://localhost:3000/v1/auth/signin';
     const res = await fetch(url, {
@@ -32,4 +36,18 @@ export const profile = async (token: string) => {
     const data = await res.json();
 
     return data;
+};
+
+export const updateBio = async (body: BodyBio, token: string ) => {
+    const url = 'http://localhost:3000/v1/auth/update';
+    const res = await fetch(url, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "auth-token": token
+        },
+        body: JSON.stringify(body)
+    });
+
+    return res;
 }

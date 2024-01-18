@@ -1,28 +1,28 @@
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent, useState } from "react";
 
 interface FormState {
-    [key: string]: string;
+  [key: string]: string;
 }
 
-export const useForm = (initialForm = {}) => {
-    const [formState, setFormState] = useState<FormState>(initialForm);
+export const useForm = <T extends FormState>(initialForm: T) => {
+  const [formState, setFormState] = useState<T>(initialForm);
 
-    const handleChange = ({target}: ChangeEvent<HTMLInputElement>) => {
-        const {name, value} = target;
-        setFormState({
-            ...formState,
-            [name]: value
-        });
-    }
+  const handleChange = ({ target }: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = target;
+    setFormState({
+      ...formState,
+      [name]: value,
+    });
+  };
 
-    const handleReset = () => {
-        setFormState(initialForm);
-    };
+  const handleReset = () => {
+    setFormState(initialForm);
+  };
 
-    return {
-        ...formState,
-        formState,
-        handleChange,
-        handleReset
-    }
-}
+  return {
+    ...formState,
+    formState,
+    handleChange,
+    handleReset,
+  };
+};

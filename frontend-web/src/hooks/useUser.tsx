@@ -37,4 +37,4 @@ export const useUser = (token: string) => {
         user,
         isLoading
     }
-}
+};
