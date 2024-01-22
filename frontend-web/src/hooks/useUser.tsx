@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
 import { profile } from "../helpers/authUser";
-import { Post } from "./usePosts";
 
 export interface Profile {
     email: string;
@@ -10,7 +9,7 @@ export interface Profile {
     avatarUrl: string;
     drafts: string[];
     muted: boolean;
-    posts: Post[];
+    posts: string[];
     _id: string;
 }
 

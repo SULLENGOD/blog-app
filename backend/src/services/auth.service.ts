@@ -162,6 +162,15 @@ export const muteAnAuthor = async (adminId: string, userId: string) => {
   return user;
 };
 
+/**
+ * The function deletes an author from the database if the user calling the function is a super
+ * administrator.
+ * @param {string} adminId - The `adminId` parameter is the ID of the admin user who is performing the
+ * delete operation.
+ * @param {string} userId - The `userId` parameter is the unique identifier of the user that you want
+ * to delete.
+ * @returns The username of the deleted user is being returned.
+ */
 export const deleteAuthor = async (adminId: string, userId: string) => {
   const admin = await User.findById(adminId);
   if (!admin || admin.role !== "super_administrator") {
@@ -175,6 +184,14 @@ export const deleteAuthor = async (adminId: string, userId: string) => {
   return user.username;
 };
 
+/**
+ * The function updates the author information for a user with the provided user ID.
+ * @param {string} userId - The userId parameter is a string that represents the unique identifier of
+ * the user whose information needs to be updated.
+ * @param {IUser} userInfo - The `userInfo` parameter is an object that represents the updated
+ * information for the user. It should have properties that match the fields of the `IUser` interface.
+ * @returns the updated user object.
+ */
 export const updateAuthorInfo = async (userId: string, userInfo: IUser) => {
   userInfo.updatedAt = new Date();
   const user = await findUser(userId);

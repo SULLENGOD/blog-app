@@ -49,7 +49,7 @@ const ProfileBio = ({ userBio }: { userBio: string | undefined }) => {
                 onChange={handleChange}
                 cols={30}
                 rows={10}
-                className="bg-white w-full text-xs"
+                className="bg-white w-full text-xs p-3"
               ></textarea>
               <div className="flex justify-end">
                 <button

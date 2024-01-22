@@ -1,10 +1,12 @@
-import { FormEvent } from "react";
+import { FC, FormEvent, useState } from "react";
 import EyeLogo from "../../assets/Eye-white.svg";
 import { useForm } from "../../hooks/useForm";
 import { authenticate } from "../../helpers/authUser";
 import { useNavigate } from "react-router-dom";
+import Alert from "../../layout/Alert/Alert";
 
-const Login = () => {
+const Login: FC = () => {
+  const [alert, setAlert] = useState<string | null>(null);
   const navigate = useNavigate();
   const { email, password, handleChange } = useForm({
     email: "",
@@ -22,7 +24,8 @@ const Login = () => {
     const {res, data} = await authenticate(user);
     
     if (!res.ok) {
-      alert("something wrong");
+      console.log(res);
+      setAlert("Wrong email or password...");
     } else {
       const authToken = res.headers.get("auth-token") ?? '';
       localStorage.setItem("auth-token", authToken)
@@ -41,6 +44,7 @@ const Login = () => {
         <div className="bg-white-paper-20 p-5">
           <form onSubmit={handleSubmit}>
             <div className="mb-2">
+              {alert && <Alert text={alert}/>}
               <label htmlFor="email" className="text-xs block mb-2">
                 E-Mail
               </label>
