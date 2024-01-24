@@ -8,8 +8,8 @@ import PostContent from "../components/PostContent";
 interface PostPageProps {}
 
 const PostPage: FC<PostPageProps> = () => {
-  const { id }: { id: string } = useParams();
-
+  
+  const { id } = useParams<{id: string | undefined}>();
   const { post, isLoading }: { post: Post | null; isLoading: boolean } = usePost(id);
 
   return (

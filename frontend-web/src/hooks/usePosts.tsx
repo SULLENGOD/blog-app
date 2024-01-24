@@ -43,7 +43,7 @@ export const usePosts = () => {
   };
 };
 
-export const usePost = (id: string) => {
+export const usePost = (id: string | undefined) => {
   const [post, setPost] = useState<Post | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 

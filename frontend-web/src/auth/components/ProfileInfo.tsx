@@ -9,8 +9,8 @@ const ProfileInfo = () => {
   return (
     <div>
       <h1 className="py-5">
-        {user?.username}{" "}
-        <p className="text-xs text-white-paper-50">({user?.role})</p>
+        {user?.username}
+        <p className="text-xs text-white-paper-50 py-1">({user?.role})</p>
       </h1>
       <div>
        <ProfileBio userBio={user?.bio} />

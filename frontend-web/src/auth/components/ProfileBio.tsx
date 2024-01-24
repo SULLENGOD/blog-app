@@ -17,7 +17,7 @@ const ProfileBio = ({ userBio }: { userBio: string | undefined }) => {
     event.preventDefault();
     setActiveEdit(false);
     handleReset();
-    const token = localStorage.getItem("auth-token");
+    const token = localStorage.getItem("auth-token") || "";
     try {
       await updateBio({ bio }, token);
     } catch (e) {
