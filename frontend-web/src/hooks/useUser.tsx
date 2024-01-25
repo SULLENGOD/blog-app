@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { profile } from "../helpers/authUser";
 
 export interface Profile {
+    _id: string;
     email: string;
     username: string;
     bio: string;
@@ -10,7 +11,6 @@ export interface Profile {
     drafts: string[];
     muted: boolean;
     posts: string[];
-    _id: string;
 }
 
 export const useUser = (token: string) => {
