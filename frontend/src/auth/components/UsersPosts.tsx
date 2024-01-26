@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { UserContext, UserContextData } from "../context/UserContext";
-import PostCard from "../../layout/PostCard/PostCard";
+import PostCard from "../../layout/PostCard/Postcard";
 
 const UsersPosts = () => {
   const { user } = useContext<UserContextData>(UserContext);

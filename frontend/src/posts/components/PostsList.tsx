@@ -1,6 +1,6 @@
 import { FC, useContext } from "react";
 import { PostsContext, PostsContextData } from "../context/PostsContext";
-import PostCard from "../../layout/PostCard/PostCard";
+import PostCard from "../../layout/PostCard/Postcard";
 
 
 const PostsList: FC = () => {
