@@ -15,17 +15,17 @@ const PostCard: FC<{ id: string;  }> = ({ id }) => {
       {isLoading ? (
         <PostLoader />
       ) : (
-        <Link to={`/posts/${id}`} className="">
+        <Link to={`/posts/${id}`} >
           <div className="p-3 m-2 flex">
             <img
               src={post?.featuredImage ? post?.featuredImage : stockImage}
               alt={post?.title}
               className="size-44 h-auto"
             />
-            <div className="m-1 flex flex-col justify-between">
-              <h1>{post?.title}</h1>
+            <div className="m-1 flex flex-col justify-between ms-3">
+              <h1 className="text-2xl">{post?.title}</h1>
               <div>
-                <h5 className="text-xs text-white-paper-50">
+                <h5 className="text-base text-white-paper-50">
                   {post?.author.username}
                 </h5>
                 <div className="flex gap-2 text-center">

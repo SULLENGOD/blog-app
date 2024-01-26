@@ -11,17 +11,15 @@ const Profile = () => {
     <UserContext.Provider value={{ user, isLoading }}>
       <div className="max-w-lg">
         <section className="border-x flex flex-col">
-          <div className="p-5 m-auto">
-              <img
-                src={user?.avatarUrl == "" ? EyeLogo : user?.avatarUrl}
-                alt="Eye"
-                className="w-full max-w-72"
-              />
+          <div className="m-auto">
+            <img
+              src={user?.avatarUrl == "" ? EyeLogo : user?.avatarUrl}
+              alt="Eye"
+              className="w-full"
+            />
           </div>
           <div className="bg-white-paper p-5">
-            <div className="">
-              <ProfileNav />
-            </div>
+            <ProfileNav />
           </div>
         </section>
       </div>

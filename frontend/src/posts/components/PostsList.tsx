@@ -1,6 +1,6 @@
 import { FC, useContext } from "react";
 import { PostsContext, PostsContextData } from "../context/PostsContext";
-import PostCard from "../../layout/PostCard/Postcard";
+import PostCard from "../../layout/PostCard/PostCard";
 
 
 const PostsList: FC = () => {
@@ -8,7 +8,7 @@ const PostsList: FC = () => {
 
   return (
     <div className="">
-        <h1 className="text-white-paper text-center p-3 border-b bg-[#202020]">
+        <h1 className="text-white-paper text-2xl text-center p-3 border-b bg-[#202020]">
           Recent Posts
         </h1>
       <div className="flex flex-wrap justify-start">

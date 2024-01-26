@@ -10,7 +10,7 @@ const PostsPage: FC<PostsPageProps> = () => {
 
   return (
     <PostsContext.Provider value={{ posts, isLoading }}>
-      <section className="max-w-xl border-x bg-white-paper-20">
+      <section className="min-w-min border-x bg-white-paper-20">
           <PostsList />
       </section>
     </PostsContext.Provider>

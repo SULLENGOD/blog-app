@@ -29,10 +29,10 @@ const ProfileBio = ({ userBio }: { userBio: string | undefined }) => {
   return (
     <>
       <div className="flex justify-between">
-        <h5 className="">Bio:</h5>
+        <h5 className="text-2xl">Bio:</h5>
         <button
           onClick={() => setActiveEdit(true)}
-          className="border border-black-paper px-1 border-b-0 hover:bg-black-paper hover:text-white-paper"
+          className="border text-2xl border-black-paper px-1 border-b-0 hover:bg-black-paper hover:text-white-paper"
         >
           edit
         </button>

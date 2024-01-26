@@ -8,7 +8,7 @@ const ProfileInfo = () => {
 
   return (
     <div>
-      <h1 className="py-5">
+      <h1 className="py-5 text-2xl">
         {user?.username}
         <p className="text-xs text-white-paper-50 py-1">({user?.role})</p>
       </h1>
