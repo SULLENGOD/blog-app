@@ -24,8 +24,6 @@ const ProfileBio = ({ userBio }: { userBio: string | undefined }) => {
       console.error(e);
     }
   };
-
-  console.log(userBio);
   return (
     <>
       <div className="flex justify-between">

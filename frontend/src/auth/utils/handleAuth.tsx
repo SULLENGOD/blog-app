@@ -14,6 +14,7 @@ export const handleAuthentication = async (
     setAlert("Wrong email or password...");
   } else {
     handleToken(res.headers);
+    handleUserId(data.userId);
     navigate(`../${data.userId}`);
   }
 };
@@ -21,4 +22,8 @@ export const handleAuthentication = async (
 export const handleToken = (headers: Headers) => {
   const authToken = headers.get("auth-token") ?? "";
   localStorage.setItem("auth-token", authToken);
+};
+
+export const handleUserId = (id: string) => {
+  localStorage.setItem('userId', id);
 };

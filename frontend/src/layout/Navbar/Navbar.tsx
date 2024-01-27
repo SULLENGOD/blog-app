@@ -3,6 +3,7 @@ import EyeLogo from "../../assets/Eye-white.svg";
 import { NavLink } from "react-router-dom";
 
 const Navbar = () => {
+
   return (
     <header className="flex justify-center gap-1 border-b border-white-line">
       <img src={EyeLogo} alt="Eye" className="eye-logo" />

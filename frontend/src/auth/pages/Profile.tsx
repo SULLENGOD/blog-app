@@ -12,11 +12,17 @@ const Profile = () => {
       <div className="max-w-lg">
         <section className="border-x flex flex-col">
           <div className="m-auto">
-            <img
-              src={user?.avatarUrl == "" ? EyeLogo : user?.avatarUrl}
-              alt="Eye"
-              className="w-full"
-            />
+            {isLoading ? (
+              <div className="p-5">
+                <h1 className="text-white-paper text-5xl p-5">loading...</h1>
+              </div>
+            ) : (
+              <img
+                src={user?.avatarUrl == "" ? EyeLogo : user?.avatarUrl}
+                alt="Eye"
+                className="w-full"
+              />
+            )}
           </div>
           <div className="bg-white-paper p-5">
             <ProfileNav />
