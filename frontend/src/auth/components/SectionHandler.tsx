@@ -1,4 +1,5 @@
 import ProfileInfo from "./ProfileInfo"
+import ProfileSettings from "./ProfileSettings"
 import UsersPosts from "./UsersPosts"
 
 
@@ -11,7 +12,7 @@ const SectionHandler = ({section}: {section: string}) => {
         ) : section == 'posts' ?(
           <UsersPosts />
         ) : (
-          <h1>{section}</h1>
+          <ProfileSettings />
         )
       }
     </div>

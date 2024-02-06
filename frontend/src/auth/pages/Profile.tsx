@@ -20,7 +20,7 @@ const Profile = () => {
               <img
                 src={user?.avatarUrl == "" ? EyeLogo : user?.avatarUrl}
                 alt="Eye"
-                className="w-full"
+                className="w-full p-3"
               />
             )}
           </div>
