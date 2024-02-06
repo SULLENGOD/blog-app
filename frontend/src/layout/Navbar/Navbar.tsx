@@ -1,4 +1,3 @@
-import "./Navbar.css";
 import EyeLogo from "../../assets/Eye-white.svg";
 import { NavLink } from "react-router-dom";
 
